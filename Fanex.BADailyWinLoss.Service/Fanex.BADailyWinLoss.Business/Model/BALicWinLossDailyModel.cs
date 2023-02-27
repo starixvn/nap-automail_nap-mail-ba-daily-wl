@@ -1,0 +1,43 @@
+﻿using System;
+
+namespace Fanex.BADailyWinLoss.Business.Model
+{
+    public class BALicWinLossDailyModel
+    {
+        public string LicenseeName { get; set; }
+
+        public int LicenseeID { get; set; }
+
+        public int Currency { get; set; }
+
+        public string CurrencyName { get; set; }
+
+        public double TurnOverRM { get; set; }
+
+        public double WinlostVirtual { get; set; }
+
+        public double WinlostRM { get; set; }
+
+        public double AmtDueToBAVirtual { get; set; }
+
+        public double AmtDueToBARM { get; set; }
+
+        public double CommVirtual { get; set; }
+
+        public double CommRM { get; set; }
+
+        public double BetCount { get; set; }
+
+        public bool LiveIndicator { get; set; }
+
+        public DateTime WinlostDate { get; set; }
+
+        public double Margin
+        {
+            get
+            {
+                return this.TurnOverRM > 0 ? -(this.WinlostRM / this.TurnOverRM) : 0;
+            }
+        }
+    }
+}
