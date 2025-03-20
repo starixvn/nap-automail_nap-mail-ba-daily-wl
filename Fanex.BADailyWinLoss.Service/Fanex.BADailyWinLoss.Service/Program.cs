@@ -1,21 +1,32 @@
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
+using Fanex.BADailyWinLoss.Service;
+using Fanex.BADailyWinLoss.Service.Extensions;
+using Fanex.Data.SqlServer;
+using Fanex.Logging.Sentry.RavenClient;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace Fanex.BADailyWinLoss.Service
-{
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
-            CreateHostBuilder(args).Build().Run();
-        }
+var builder = WebApplication.CreateBuilder(args);
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseUrls($"http://0.0.0.0:5000");
-                    webBuilder.UseStartup<Startup>();
-                });
-    }
-}
+var services = builder.Services;
+var configuration = builder.Configuration;
+services.AddConfig();
+services.AddFanexSql(configuration);
+services.AddFanexLogSentry(configuration);
+services.AddInternalServices();
+
+// Configure services
+builder.Services.AddControllers();
+services.AddSwaggerGen();
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline
+app.ConfigureExceptionHandler();
+app.UseDeveloperExceptionPage();
+app.UseSwagger();
+app.UseSwaggerUI();
+
+app.UseRouting();
+app.MapControllers();
+
+await app.RunAsync();
